@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Registration Form</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="form-container">
+    <h2>📝 Registration Form</h2>
+    <form id="myForm">
+      
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name">
+        <span class="error" id="nameError"></span>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email">
+        <span class="error" id="emailError"></span>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+        <span class="error" id="passwordError"></span>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword">
+        <span class="error" id="confirmPasswordError"></span>
+      </div>
+
+      <!-- Show Password -->
+      <div class="form-group">
+        <input type="checkbox" id="showPassword"> Show Password
+      </div>
+
+      <!-- Gender -->
+      <div class="form-group">
+        <label>Gender:</label>
+        <input type="radio" name="gender" value="Male"> Male
+        <input type="radio" name="gender" value="Female"> Female
+        <input type="radio" name="gender" value="Other"> Other
+      </div>
+
+      <!-- Skills -->
+      <div class="form-group">
+        <label>Skills:</label>
+        <input type="checkbox" value="HTML"> HTML
+        <input type="checkbox" value="CSS"> CSS
+        <input type="checkbox" value="JavaScript"> JavaScript
+        <input type="checkbox" value="C++"> C++
+      </div>
+
+      <!-- Country + State -->
+      <div class="form-group">
+        <label for="country">Country:</label>
+        <select id="country">
+          <option value="">-- Select Country --</option>
+          <option value="India">India</option>
+          <option value="USA">USA</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="state">State:</label>
+        <select id="state">
+          <option value="">-- Select State --</option>
+        </select>
+      </div>
+
+      <!-- About You -->
+      <div class="form-group">
+        <label for="about">About You:</label>
+        <textarea id="about" rows="4" maxlength="200"></textarea>
+        <div id="charCount">200 characters remaining</div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <!-- Summary -->
+  <div id="summary"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
