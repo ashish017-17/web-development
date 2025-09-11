@@ -11,6 +11,7 @@ for (const subject in grades) {
 
 // Add a new subject
 grades.History = 88;
+grades.Geography = 92;
 
 // Print again
 console.log("After adding History:");

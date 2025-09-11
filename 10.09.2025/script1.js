@@ -1,7 +1,7 @@
 const student = {
-    name: "Alice",
-    age: 16,
-    grade: "10th"
+    name: "Ashish",
+    age: 21,
+    grade: "B.tech"
 };
 
 console.log("Initial student:", student);
