@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Birthday Gift Reveal</title>
+  <style>
+    :root{
+      --bg:#f9f3ff;
+      --accent:#ff6fb5;
+      --accent-2:#6fb8ff;
+      --box:#ff99cc;
+      --shadow: rgba(0,0,0,0.12);
+      --card: #ffffff;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;display:flex;align-items:center;justify-content:center;
+      background: radial-gradient(circle at 10% 10%, #fff8ff 0%, var(--bg) 40%);
+      color:#222; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .stage{width:min(900px,94vw); height:min(700px,86vh); background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.95)); border-radius:18px; box-shadow:0 10px 30px var(--shadow); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px;}
+
+    .title{font-size:28px;font-weight:700; margin:6px 0;text-align:center}
+    .subtitle{color:#6b6b6b;text-align:center;margin-bottom:20px}
+
+    /* gift area */
+    .gift-area{display:flex;align-items:center;justify-content:center; height:100%; position:relative}
+    .gift-wrap{position:relative; width:260px; height:260px; perspective:1200px}
+
+    .box{
+      width:100%; height:100%; background:linear-gradient(180deg,var(--box), #ff87bf); border-radius:12px; position:relative; transform-style:preserve-3d; transition:transform 700ms cubic-bezier(.2,.9,.2,1);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+      display:flex;align-items:center;justify-content:center;overflow:hidden;
+    }
+    .lid{position:absolute; top:-18%; left:0; width:100%; height:42%; background:linear-gradient(180deg,#ff74b3,#ff5fa0); border-radius:12px 12px 0 0; transform-origin:50% 100%; transform:rotateX(0deg); transition:transform 700ms cubic-bezier(.2,.9,.2,1); box-shadow:0 8px 18px rgba(0,0,0,0.12)}
+
+    .ribbon-vert{position:absolute; left:50%; transform:translateX(-50%); width:38px; height:100%; background:linear-gradient(180deg,#ff3f92,#e12f78); border-radius:6px}
+    .ribbon-horz{position:absolute; top:50%; left:0; transform:translateY(-50%); width:100%; height:28px; background:linear-gradient(90deg,#ff3f92,#e12f78)}
+    .bow{position:absolute; top:-20px; left:50%; transform:translateX(-50%); width:110px; height:60px; display:flex;align-items:center;justify-content:center}
+    .bow::before,.bow::after{content:'';width:46px;height:46px;border-radius:50%;background:linear-gradient(180deg,#fff2ff,#ffb6de); box-shadow: inset 0 -6px 12px rgba(0,0,0,0.06)}
+
+    /* hidden gift content */
+    .surprise{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transform:translateY(8px); transition:opacity 600ms ease, transform 600ms ease; pointer-events:none}
+    .surprise img{max-width:80%; max-height:80%; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,0.12)}
+
+    .btn{display:inline-block;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; text-decoration:none; font-weight:700; cursor:pointer; border:none; box-shadow:0 8px 22px rgba(111,184,255,0.18)}
+    .btn:active{transform:translateY(1px)}
+
+    /* confetti canvas overlay */
+    canvas.confetti{position:absolute; inset:0; pointer-events:none}
+
+    /* opened state */
+    .opened .lid{transform:rotateX(-110deg) translateY(-6%);} 
+    .opened .surprise{opacity:1; transform:translateY(0)}
+
+  </style>
+</head>
+<body>
+  <div class="stage" role="main">
+    <div class="title">A little surprise for you 🎁</div>
+    <div class="subtitle">Click the button to open your birthday gift.</div>
+
+    <div class="gift-area" aria-hidden="false">
+      <div class="gift-wrap" id="giftWrap">
+        <div class="box" id="box">
+          <div class="ribbon-vert"></div>
+          <div class="ribbon-horz"></div>
+          <div class="bow"></div>
+          <div class="lid" id="lid"></div>
+
+          <div class="surprise" id="surprise">
+            <img src="23.png" alt="Gift" />
+          </div>
+
+        </div>
+      </div>
+
+      <canvas class="confetti" id="confettiCanvas"></canvas>
+    </div>
+
+    <div style="margin-top:20px">
+      <button id="openBtn" class="btn">Open Gift</button>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const box = document.getElementById('box');
+    const giftWrap = document.getElementById('giftWrap');
+    const lid = document.getElementById('lid');
+    const surprise = document.getElementById('surprise');
+    const openBtn = document.getElementById('openBtn');
+
+    // Confetti setup
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H; function resize(){W = canvas.width = giftWrap.clientWidth; H = canvas.height = giftWrap.clientHeight;} window.addEventListener('resize', resize); resize();
+
+    let particles = [];
+    function random(min, max){return Math.random()*(max-min)+min}
+    function spawnConfetti(count=80){
+      particles = [];
+      for(let i=0;i<count;i++){
+        particles.push({
+          x: random(0,W), y: random(-H,0), vx: random(-2,2), vy: random(2,7), size: random(6,12), rot: random(0,360), vr: random(-6,6), color: `hsl(${Math.floor(random(0,360))},90%,55%)`, life: random(60,150)
+        });
+      }
+    }
+    function updateConfetti(){
+      ctx.clearRect(0,0,W,H);
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.rot += p.vr; p.life--;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+        ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+        ctx.restore();
+        if(p.y>H+30 || p.life<0) particles.splice(i,1);
+      }
+    }
+
+    let anim;
+    function runConfetti(){ cancelAnimationFrame(anim); function loop(){ updateConfetti(); if(particles.length) anim=requestAnimationFrame(loop); } loop(); }
+
+    // Open logic
+    function openGift(){
+      giftWrap.classList.add('opened');
+      spawnConfetti(140);
+      runConfetti();
+      box.style.transform = 'rotateY(6deg) translateY(-6px)';
+    }
+
+    openBtn.addEventListener('click', openGift);
+
+    // small auto-open if url has ?open=1
+    if(new URLSearchParams(location.search).get('open')==='1') setTimeout(openGift, 600);
+  </script>
+</body>
+</html>
